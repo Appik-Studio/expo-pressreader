@@ -1,0 +1,25 @@
+example/
+*.tgz
+.DS_Store
+.git/
+.expo/
+node_modules/
+*.log
+.vscode/
+.idea/
+*.tmp
+*.temp
+/build/
+.github/
+# Exclude all top-level hidden directories by convention
+/.*/
+
+__mocks__
+__tests__
+
+/babel.config.js
+/android/src/androidTest/
+/android/src/test/
+/android/build/
+/example/
+pr-ios-sdk

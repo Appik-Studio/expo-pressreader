@@ -1,0 +1,57 @@
+{
+  "name": "expo-pressreader-example",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "ios": "bun dev:watchman-del && expo run:ios",
+    "android": "bun dev:watchman-del && expo run:android",
+    "start": "expo start",
+    "lint": "eslint . --config ../eslint.config.js --ext .ts,.tsx,.js,.jsx",
+    "android:reset": "rm -rf node_modules bun.lock && bun install && bun run expo:prebuild-clean-android",
+    "android:reset-and-run": "bun run android:reset && bun run android",
+    "ios:pod-install": "cd ios && pod install",
+    "ios:reset": "rm -rf node_modules bun.lock && bun install && bun run expo:prebuild-clean-ios",
+    "ios:reset-and-run": "bun run ios:reset && bun run ios",
+    "dev": "bun dev:watchman-del && expo start --dev-client --clear",
+    "dev:watchman-del": "watchman watch-del '.' > /dev/null 2>&1",
+    "dev:release-ports": "killall node",
+    "clean": "rm -rf node_modules ../node_modules bun.lock ../bun.lock && bun install && bun run expo:prebuild-clean",
+    "clean:node-modules": "bunx npkill",
+    "expo:prebuild": "bunx expo prebuild",
+    "expo:prebuild-clean": "yes | bunx expo prebuild --clean",
+    "expo:prebuild-clean-ios": "yes | bunx expo prebuild --clean -p ios",
+    "expo:prebuild-clean-android": "yes | bunx expo prebuild --clean -p android"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^14.0.2",
+    "@react-navigation/native": "^7.0.0",
+    "expo": "~52.0.0",
+    "expo-build-properties": "~0.13.3",
+    "expo-font": "~13.0.1",
+    "expo-linking": "~7.0.3",
+    "expo-router": "~4.0.13",
+    "expo-splash-screen": "~0.29.18",
+    "expo-status-bar": "~2.0.0",
+    "expo-system-ui": "~4.0.6",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "react-native-reanimated": "~3.16.1",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@types/react": "~18.3.12",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "^9.0.0",
+    "expo-module-scripts": "^4.1.7",
+    "typescript": "^5.3.3"
+  },
+  "private": true,
+  "expo": {
+    "autolinking": {
+      "nativeModulesDir": ".."
+    }
+  }
+}

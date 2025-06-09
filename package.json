@@ -1,0 +1,72 @@
+{
+  "name": "@appik-studio/expo-pressreader",
+  "version": "0.0.1",
+  "description": "Expo plugin for PressReader SDK - provides access to newspapers and magazines",
+  "main": "src/index",
+  "types": "src/index",
+  "exports": {
+    ".": {
+      "import": "./src/index",
+      "types": "./src/index"
+    },
+    "./plugin": {
+      "import": "./plugins/build/expo-pressreader.js",
+      "types": "./plugins/build/expo-pressreader.d.ts"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "scripts": {
+    "build": "timeout 10 expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "bun run build:plugin && husky && expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "bump-version": "bun run scripts/bump-version.ts",
+    "expo-module": "expo-module",
+    "open:ios": "xed example/ios",
+    "open:android": "open -a \"Android Studio\" example/android",
+    "android": "cd example && bun run android:reset-and-run",
+    "ios": "expo run:ios",
+    "build:plugin": "tsc --build ./plugins/tsconfig.json",
+    "ios:refresh": "bun run build:plugin && cd example && bun run expo:prebuild-clean-ios && bun run ios:pod-install && bun run ios",
+    "android:refresh": "bun run build:plugin && cd example && bun run expo:prebuild-clean-android && bun run android"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-pressreader",
+    "ExpoPressReader",
+    "pressreader",
+    "newspapers",
+    "magazines",
+    "news",
+    "reader"
+  ],
+  "repository": "https://github.com/Appik-Studio/expo-pressreader.git",
+  "bugs": {
+    "url": "https://github.com/Appik-Studio/expo-pressreader/issues"
+  },
+  "author": "Livio Gamassia <livio@appik-studio.ch> (Appik-Studio)",
+  "license": "MIT",
+  "homepage": "https://github.com/Appik-Studio/expo-pressreader#readme",
+  "dependencies": {
+    "expo": "~52.0.46",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "@expo/config-plugins": "~8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "@types/react": "~18.3.12",
+    "expo-module-scripts": "^4.0.2",
+    "husky": "^9.1.7"
+  },
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  }
+}

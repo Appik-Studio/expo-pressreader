@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "expo-pressreader-config-plugin",
+    "slug": "expo-pressreader-config-plugin",
+    "version": "0.0.1",
+    "description": "Config plugin for android",
+    "sdkVersion": "49.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  }
+}
