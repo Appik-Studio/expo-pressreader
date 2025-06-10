@@ -1,6 +1,6 @@
 {
   "name": "@appik-studio/expo-pressreader",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Expo plugin for PressReader SDK - provides access to newspapers and magazines",
   "main": "src/index",
   "types": "src/index",
