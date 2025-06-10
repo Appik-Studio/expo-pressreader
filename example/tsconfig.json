@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "expo-pressreader": ["../src/index"],
-      "expo-pressreader/*": ["../src/*"]
+      "@appik-studio/expo-pressreader": ["../src/index"],
+      "@appik-studio/expo-pressreader/*": ["../src/*"]
     }
   }
 }

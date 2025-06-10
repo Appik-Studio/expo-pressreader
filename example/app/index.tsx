@@ -1,4 +1,4 @@
-import ExpoPressReader from 'expo-pressreader'
+import ExpoPressReader from '@appik-studio/expo-pressreader'
 import {useState} from 'react'
 import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
 import styles from './styles'

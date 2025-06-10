@@ -15,7 +15,7 @@ config.resolver.nodeModulesPaths = [
 ]
 
 config.resolver.extraNodeModules = {
-  'expo-pressreader': '..',
+  '@appik-studio/expo-pressreader': '..',
 }
 
 config.watchFolders = [path.resolve(__dirname, '..')]
