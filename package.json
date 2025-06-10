@@ -1,36 +1,29 @@
 {
   "name": "@appik-studio/expo-pressreader",
-  "version": "0.0.3",
+  "version": "0.0.19",
   "description": "Expo plugin for PressReader SDK - provides access to newspapers and magazines",
-  "main": "src/index",
-  "types": "src/index",
-  "expo": {
-    "plugin": "app.plugin.js"
-  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "files": [
-    "src",
-    "plugins",
-    "android/sdk-dist",
-    "app.plugin.js"
+    "build",
+    "android",
+    "ios",
+    "plugin/build",
+    "app.plugin.js",
+    "expo-module.config.json"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
   "scripts": {
-    "build": "timeout 10 expo-module build",
+    "build": "expo-module build",
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
-    "prepare": "bun run build:plugin && husky && expo-module prepare",
+    "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "bump-version": "bun run scripts/bump-version.ts",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
     "open:android": "open -a \"Android Studio\" example/android",
-    "android": "cd example && bun run android:reset-and-run",
-    "ios": "expo run:ios",
-    "build:plugin": "tsc --build ./plugins/tsconfig.json",
+    "build:plugin": "tsc --build ./plugin/tsconfig.json",
     "ios:refresh": "bun run build:plugin && cd example && bun run expo:prebuild-clean-ios && bun run ios:pod-install && bun run ios",
     "android:refresh": "bun run build:plugin && cd example && bun run expo:prebuild-clean-android && bun run android"
   },
@@ -38,12 +31,7 @@
     "react-native",
     "expo",
     "expo-pressreader",
-    "ExpoPressReader",
-    "pressreader",
-    "newspapers",
-    "magazines",
-    "news",
-    "reader"
+    "ExpoPressReader"
   ],
   "repository": {
     "type": "git",
@@ -55,21 +43,20 @@
   "author": "Livio Gamassia <livio@appik-studio.ch> (Appik-Studio)",
   "license": "MIT",
   "homepage": "https://github.com/Appik-Studio/expo-pressreader#readme",
-  "dependencies": {
-    "expo": "~52.0.46",
-    "react": "18.3.1",
-    "react-native": "0.76.9",
-    "@expo/config-plugins": "~8.0.0"
-  },
   "devDependencies": {
-    "@types/node": "^22.15.30",
-    "@types/react": "~18.3.12",
-    "expo-module-scripts": "^4.0.2",
-    "husky": "^9.1.7"
+    "@types/react": "~19.0.0",
+    "expo": "~52.0.0",
+    "expo-module-scripts": "^4.1.6",
+    "husky": "^9.1.7",
+    "react-native": "*",
+    "typescript": "^5.0.0"
   },
   "peerDependencies": {
     "expo": "*",
     "react": "*",
     "react-native": "*"
+  },
+  "expo": {
+    "plugin": "./app.plugin.js"
   }
 }

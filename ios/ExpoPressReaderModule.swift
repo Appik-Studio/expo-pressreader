@@ -312,12 +312,7 @@ public class ExpoPressReaderModule: Module {
     }
 
     private func dismiss() {
-        let rvc = pressReaderInstance.rootViewController
-        DispatchQueue.main.async {
-            if rvc.presentingViewController != nil {
-                rvc.dismiss(animated: true, completion: nil)
-            }
-        }
+        PressReader.dismiss()
     }
 
     private func getPresentingController() -> UIViewController? {

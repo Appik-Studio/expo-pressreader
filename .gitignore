@@ -1,78 +1,59 @@
-# Dependencies
-node_modules/
-bun.lockb
-
-# Build output
-build/
-dist/
-
-# iOS
-ios/Pods/
-ios/Podfile.lock
-ios/*.xcworkspace
-ios/*.xcuserdata
-
-# Android
-android/build/
-android/.gradle/
-android/local.properties
-
-# Editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
+# OSX
+#
 .DS_Store
-Thumbs.db
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-bun-debug.log*
-bun-error.log*
+# VSCode
+.vscode/
+jsconfig.json
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Xcode
+#
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Android/IJ
+#
+.classpath
+.cxx
+.gradle
+.idea
+.project
+.settings
+local.properties
+android.iml
+android/app/libs
+android/keystores/debug.keystore
 
-# nyc test coverage
-.nyc_output
+# Cocoapods
+#
+example/ios/Pods
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
+# Ruby
+example/vendor/
 
-# TypeScript cache
-*.tsbuildinfo
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
 
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# Temporary folders
-tmp/
-temp/
-.expo
+# Expo
+.expo/*
+tsconfig.tsbuildinfo
+bump-version.js
