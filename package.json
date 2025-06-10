@@ -1,21 +1,20 @@
 {
   "name": "@appik-studio/expo-pressreader",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "Expo plugin for PressReader SDK - provides access to newspapers and magazines",
   "main": "src/index",
   "types": "src/index",
-  "exports": {
-    ".": {
-      "import": "./src/index",
-      "types": "./src/index"
-    },
-    "./plugin": {
-      "import": "./plugins/build/expo-pressreader.js",
-      "types": "./plugins/build/expo-pressreader.d.ts"
-    }
+  "expo": {
+    "plugin": "app.plugin.js"
   },
+  "files": [
+    "src",
+    "plugins",
+    "android/sdk-dist",
+    "app.plugin.js"
+  ],
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/",
+    "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "scripts": {
@@ -46,7 +45,10 @@
     "news",
     "reader"
   ],
-  "repository": "https://github.com/Appik-Studio/expo-pressreader.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Appik-Studio/expo-pressreader.git"
+  },
   "bugs": {
     "url": "https://github.com/Appik-Studio/expo-pressreader/issues"
   },

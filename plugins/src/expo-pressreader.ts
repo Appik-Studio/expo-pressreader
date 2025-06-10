@@ -31,14 +31,13 @@ import {
   withAndroidManifest,
   withDangerousMod,
   withInfoPlist,
-  withPodfile,
   withPodfileProperties,
   withProjectBuildGradle
 } from '@expo/config-plugins'
 import fs from 'fs'
 import path from 'path'
-import {commonConfigKeys} from './constants'
-import type {ExpoPressReaderPluginProps, PressReaderCommonConfig} from './types'
+import { commonConfigKeys } from './constants'
+import type { ExpoPressReaderPluginProps, PressReaderCommonConfig } from './types'
 
 const toSnakeCase = (str: string) =>
   str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
@@ -62,26 +61,27 @@ const withExpoPressReader: ConfigPlugin<ExpoPressReaderPluginProps> = (config, p
   })
 
   // Configure Podfile for PressReader SDK compatibility
-  config = withPodfile(config, (config) => {
-    const podfileContent = config.modResults.contents
+  config = withDangerousMod(config, [
+    'ios',
+    async config => {
+      const filePath = path.join(config.modRequest.platformProjectRoot, 'Podfile');
+      let contents = fs.readFileSync(filePath, 'utf-8');
 
-    // Add required dependencies for PressReader SDK
-    const requiredPods = `
+      // Add required dependencies for PressReader SDK
+      const requiredPods = `
   # Required dependencies for PressReader SDK
   pod 'SDWebImage'
   pod 'CocoaLumberjack'
 `
+      if (!contents.includes("pod 'SDWebImage'")) {
+        contents = contents.replace(
+          /use_expo_modules!/,
+          `use_expo_modules!${requiredPods}`
+        )
+      }
 
-    // Add pods after use_expo_modules! if not already present
-    if (!podfileContent.includes("pod 'SDWebImage'")) {
-      config.modResults.contents = podfileContent.replace(
-        /use_expo_modules!/,
-        `use_expo_modules!${requiredPods}`
-      )
-    }
-
-    // Add post_install configuration - simpler approach
-    const postInstallAddition = `
+      // Add post_install configuration
+      const postInstallAddition = `
     # PressReader SDK compatibility configuration
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
@@ -99,18 +99,17 @@ const withExpoPressReader: ConfigPlugin<ExpoPressReaderPluginProps> = (config, p
       end
     end`
 
-    // Add post_install configuration by targeting the specific end pattern
-    if (config.modResults.contents.includes('post_install do |installer|')) {
-      // Look for the specific pattern with CODE_SIGNING_ALLOWED followed by the post_install end
-      config.modResults.contents = config.modResults.contents.replace(
-        /(config\.build_settings\['CODE_SIGNING_ALLOWED'\] = 'NO'[\s\S]*?end\s*\n\s*end\s*\n)(  end\s*\n)/,
-        `$1${postInstallAddition}
-$2`
-      )
+      if (contents.includes('post_install do |installer|')) {
+        contents = contents.replace(
+          /(config\.build_settings\['CODE_SIGNING_ALLOWED'\] = 'NO'[\s\S]*?end\s*\n\s*end\s*\n)(  end\s*\n)/,
+          `$1${postInstallAddition}\n$2`
+        )
+      }
+      
+      fs.writeFileSync(filePath, contents);
+      return config;
     }
-
-    return config
-  })
+  ]);
 
   // Configure babel.config.js to add react-native-reanimated plugin
   config = withDangerousMod(config, [
