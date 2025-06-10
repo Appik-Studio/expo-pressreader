@@ -366,11 +366,16 @@ const withExpoPressReader: ConfigPlugin<ExpoPressReaderPluginProps> = (config, p
         }
 
         const xmlContent = `<?xml version="1.0" encoding="utf-8"?>\n<resources>\n${resources
-  .map(
-    r =>
-      `<${r.type} name="${r.name}"${r.translatable === false ? ' translatable="false"' : ''}>${r.value}</${r.type}>`
-  )
-  .join('\n')}\n</resources>`
+          .map(r => {
+            const value =
+              r.type === 'string'
+                ? String(r.value).replace(/&/g, '&amp;')
+                : r.value
+            return `<${r.type} name="${r.name}"${
+              r.translatable === false ? ' translatable="false"' : ''
+            }>${value}</${r.type}>`
+          })
+          .join('\n')}\n</resources>`
 
         if (!fs.existsSync(valuesDir)) {
           fs.mkdirSync(valuesDir, { recursive: true })

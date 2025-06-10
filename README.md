@@ -28,7 +28,7 @@ Add the plugin to your `app.json` or `app.config.js`:
   "expo": {
     "plugins": [
       [
-        "expo-pressreader",
+        "@appik-studio/expo-pressreader",
         {
           "serviceName": "your-service-name",
           "isDebugMode": true,
