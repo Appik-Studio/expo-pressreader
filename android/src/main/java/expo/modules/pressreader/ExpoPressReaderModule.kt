@@ -6,6 +6,7 @@ import expo.modules.kotlin.Promise
 import com.newspaperdirect.sdkfull.PressReader
 import com.newspaperdirect.sdkfull.catalog.Download
 import com.newspaperdirect.sdkfull.catalog.Item
+import com.newspaperdirect.sdkfull.MainActivity
 import com.newspaperdirect.sdk.analytics.AnalyticsTracker
 import com.newspaperdirect.sdk.analytics.ReadingViewAnalyticsTracker
 import com.newspaperdirect.sdk.analytics.TrackingArticle
@@ -13,8 +14,11 @@ import com.newspaperdirect.sdk.analytics.TrackingIssue
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
+import android.content.Intent
+import java.util.concurrent.atomic.AtomicBoolean
 
 class ExpoPressReaderModule : Module() {
+  private val isInitialized = AtomicBoolean(false)
   private val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").apply {
     timeZone = TimeZone.getTimeZone("UTC")
   }
@@ -30,6 +34,10 @@ class ExpoPressReaderModule : Module() {
 
   override fun definition() = ModuleDefinition {
     Name("ExpoPressReader")
+
+    OnCreate {
+      handleSetLaunchOptions(emptyMap())
+    }
 
     Events("onAnalyticsEvent")
 
@@ -104,15 +112,24 @@ class ExpoPressReaderModule : Module() {
     Function("dismiss") {
       dismiss()
     }
+
+    Function("open") {
+      open()
+    }
   }
 
   private fun handleSetLaunchOptions(options: Map<String, Any>) {
+    if (!isInitialized.compareAndSet(false, true)) {
+      return
+    }
+
     val context = appContext.reactContext?.applicationContext ?: return
 
     // Ensure PressReader initialization happens on the main thread
     android.os.Handler(android.os.Looper.getMainLooper()).post {
       val trackerList: MutableList<AnalyticsTracker> = ArrayList()
       // trackerList.add(CustomAnalyticsTracker(this)) // Commented out for now due to type mismatch
+      // TODO: FIXME: use options
       PressReader.init(context as android.app.Application, PressReader.Params(trackerList))
     }
   }
@@ -136,11 +153,11 @@ class ExpoPressReaderModule : Module() {
     // Ensure authorization happens on the main thread
     android.os.Handler(android.os.Looper.getMainLooper()).post {
       PressReader.instance.account.authorize(token, object : PressReader.Callback {
-        override fun onComplete(success: Boolean, error: Throwable?) {
+        override fun onComplete(success: Boolean, throwable: Throwable?) {
           if (success) {
             promise.resolve(null)
           } else {
-            promise.reject("AUTHORIZATION_FAILED", error?.message ?: "Authorization failed", error)
+            promise.reject("AUTHORIZATION_FAILED", throwable?.message ?: "Authorization failed", throwable)
           }
         }
       })
@@ -157,7 +174,7 @@ class ExpoPressReaderModule : Module() {
         // Try to find the item by articleId in downloaded items first
         val downloadedItems = PressReader.instance.catalog.downloaded.items
         val item = downloadedItems.find { it.cid == articleId }
-        
+
         if (item != null) {
           // Use the Item.open() method which returns boolean
           val success = item.open()
@@ -170,11 +187,11 @@ class ExpoPressReaderModule : Module() {
           // Fallback to execute method for non-downloaded items
           val params = mapOf("articleId" to articleId)
           PressReader.instance.execute("openArticle", params, object : PressReader.ExecuteCallback {
-            override fun completed(error: Throwable?) {
-              if (error == null) {
+            override fun completed(throwable: Throwable?) {
+              if (throwable == null) {
                 promise.resolve(null)
               } else {
-                promise.reject("ARTICLE_OPEN_FAILED", "Failed to open article with ID: $articleId - ${error.message}", error)
+                promise.reject("ARTICLE_OPEN_FAILED", "Failed to open article with ID: $articleId - ${throwable.message}", throwable)
               }
             }
           })
@@ -292,5 +309,11 @@ class ExpoPressReaderModule : Module() {
     } catch (e: Exception) {
       // Silently ignore errors in dismiss as it's not critical
     }
+  }
+
+  private fun open() {
+    val currentActivity = appContext.activityProvider?.currentActivity
+    val intent = Intent(currentActivity, MainActivity::class.java)
+    currentActivity?.startActivity(intent)
   }
 }

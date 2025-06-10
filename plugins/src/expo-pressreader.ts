@@ -3,6 +3,12 @@
  *
  * This plugin automatically configures your Expo project for PressReader SDK integration.
  *
+ * PRConfig Dictionary Structure:
+ * All PressReader configuration is placed under PRConfig dictionary in Info.plist with
+ * SCREAMING_SNAKE_CASE keys following the official PressReader SDK documentation.
+ * Key parameters with dots (e.g., "ARTICLE.POPUP_VIEW_ALLOWED") are preserved as-is.
+ * Social media URLs are grouped under ABOUT_SOCIAL_URLS array as per documentation.
+ *
  * Automatic iOS Configurations Applied:
  * ✅ Dynamic frameworks configuration (ios.useFrameworks = "dynamic")
  * ✅ SDWebImage and CocoaLumberjack pod dependencies
@@ -31,11 +37,14 @@ import {
 } from '@expo/config-plugins'
 import fs from 'fs'
 import path from 'path'
-import { commonConfigKeys } from './constants'
-import type { ExpoPressReaderPluginProps, PressReaderCommonConfig } from './types'
+import {commonConfigKeys} from './constants'
+import type {ExpoPressReaderPluginProps, PressReaderCommonConfig} from './types'
 
 const toSnakeCase = (str: string) =>
   str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`)
+
+const toScreamingSnakeCase = (str: string) =>
+  str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`).toUpperCase()
 
 const hexToNumber = (hex: string): number => {
   return parseInt(hex.replace('#', '0x'))
@@ -147,41 +156,52 @@ $2`
   config = withInfoPlist(config, (config) => {
     const infoPlist = config.modResults
 
-    // Set service name
-    infoPlist.PRServiceName = props.serviceName
+    // Initialize PRConfig dictionary
+    const prConfig: Record<string, any> = {}
 
-    // Set debug mode if enabled
-    if (props.isDebugMode) {
-      infoPlist.PRDebugMode = true
+    // Set service name
+    prConfig.SERVICE_NAME = props.serviceName
+
+    // Handle debug mode if specified
+    if (props.isDebugMode !== undefined) {
+      // Add debug mode configuration if needed by specific implementations
+      prConfig.DEVICE_ACCOUNT_ONLY = true
+      prConfig.SHOW_SIGNUP = false
+      prConfig.MODE = 1
     }
 
-    // Apply common iOS properties with proper conversion
-    if (props.colorBrand !== undefined) infoPlist.PRColorBrand = hexToNumber(props.colorBrand);
-    if (props.colorBrandDark !== undefined) infoPlist.PRColorBrandDark = hexToNumber(props.colorBrandDark);
-    if (props.colorBackground !== undefined) infoPlist.PRColorBackground = hexToNumber(props.colorBackground);
-    if (props.colorBackgroundDark !== undefined) infoPlist.PRColorBackgroundDark = hexToNumber(props.colorBackgroundDark);
-    if (props.brandGradientStartColor !== undefined) infoPlist.PRBrandGradientStartColor = hexToNumber(props.brandGradientStartColor);
-    if (props.brandGradientEndColor !== undefined) infoPlist.PRBrandGradientEndColor = hexToNumber(props.brandGradientEndColor);
-    if (props.onboardingEnabled !== undefined) infoPlist.PROnboardingSupported = props.onboardingEnabled;
-    if (props.sdkExitButtonText !== undefined) infoPlist.PRSdkExitButtonTitle = props.sdkExitButtonText;
-    if (props.supportEmailAddress !== undefined) infoPlist.PRSupportEmailAddress = props.supportEmailAddress;
-    if (props.newsfeedApi !== undefined) infoPlist.PRNewsfeedApi = props.newsfeedApi;
-    if (props.articleCommentsEnabled !== undefined) infoPlist.PRArticleCommentsEnabled = props.articleCommentsEnabled;
-    if (props.articleVotesEnabled !== undefined) infoPlist.PRArticleVotesEnabled = props.articleVotesEnabled;
-    if (props.isPopupArticleViewAllowed !== undefined) infoPlist.PRArticlePopupViewAllowed = props.isPopupArticleViewAllowed;
-    if (props.readerExternalLinksEnabled !== undefined) infoPlist.PRReaderExternalLinksEnabled = props.readerExternalLinksEnabled;
-    if (props.localServerUrl !== undefined) infoPlist.PRLocalServerUrl = props.localServerUrl;
-    if (props.showCustomerSupport !== undefined) infoPlist.PRBundleShowCustomerSupport = props.showCustomerSupport;
-    if (props.supportPhoneNumber !== undefined) infoPlist.PRSupportPhoneNumber = props.supportPhoneNumber;
-    if (props.termsOfUseUrl !== undefined) infoPlist.PRLegalUrl = props.termsOfUseUrl;
-    if (props.privacyPolicyUrl !== undefined) infoPlist.PRPrivacyPolicyUrl = props.privacyPolicyUrl;
-    if (props.registrationUrl !== undefined) infoPlist.PRRegistrationUrl = props.registrationUrl;
-    if (props.translateEnabled !== undefined) infoPlist.PRTranslate = props.translateEnabled;
-    if (props.showRegistration !== undefined) infoPlist.PRShowSignup = props.showRegistration;
-    if (props.facebookUrl !== undefined) infoPlist.PRFacebookUrl = props.facebookUrl;
-    if (props.instagramUrl !== undefined) infoPlist.PRInstagramUrl = props.instagramUrl;
-    if (props.twitterUrl !== undefined) infoPlist.PRTwitterUrl = props.twitterUrl;
-    if (props.youtubeUrl !== undefined) infoPlist.PRYoutubeUrl = props.youtubeUrl;
+    // Apply common iOS properties with proper conversion and exact documentation keys
+    if (props.colorBrand !== undefined) prConfig.COLOR_BRAND = hexToNumber(props.colorBrand);
+    if (props.colorBrandDark !== undefined) prConfig.COLOR_BRAND_DARK = hexToNumber(props.colorBrandDark);
+    if (props.colorBackground !== undefined) prConfig.COLOR_BACKGROUND = hexToNumber(props.colorBackground);
+    if (props.colorBackgroundDark !== undefined) prConfig.COLOR_BACKGROUND_DARK = hexToNumber(props.colorBackgroundDark);
+    if (props.brandGradientStartColor !== undefined) prConfig.BRAND_GRADIENT_START_COLOR = hexToNumber(props.brandGradientStartColor);
+    if (props.brandGradientEndColor !== undefined) prConfig.BRAND_GRADIENT_END_COLOR = hexToNumber(props.brandGradientEndColor);
+    if (props.onboardingEnabled !== undefined) prConfig.ONBOARDING_SUPPORTED = props.onboardingEnabled;
+    if (props.sdkExitButtonText !== undefined) prConfig.SDK_EXIT_BUTTON_TITLE = props.sdkExitButtonText;
+    if (props.supportEmailAddress !== undefined) prConfig.SUPPORT_EMAIL_ADDRESS = props.supportEmailAddress;
+    if (props.newsfeedApi !== undefined) prConfig.NEWSFEED_API = props.newsfeedApi;
+    if (props.articleCommentsEnabled !== undefined) prConfig.ARTICLE_COMMENTS_ENABLED = props.articleCommentsEnabled;
+    if (props.articleVotesEnabled !== undefined) prConfig.ARTICLE_VOTES_ENABLED = props.articleVotesEnabled;
+    if (props.isPopupArticleViewAllowed !== undefined) prConfig['ARTICLE.POPUP_VIEW_ALLOWED'] = props.isPopupArticleViewAllowed;
+    if (props.readerExternalLinksEnabled !== undefined) prConfig['READER.EXTERNAL_LINKS.ENABLED'] = props.readerExternalLinksEnabled;
+    if (props.localServerUrl !== undefined) prConfig.LOCAL_SERVER_URL = props.localServerUrl;
+    if (props.showCustomerSupport !== undefined) prConfig['BUNDLE.SHOW_CUSTOMER_SUPPORT'] = props.showCustomerSupport;
+    if (props.supportPhoneNumber !== undefined) prConfig.SUPPORT_PHONE_NUMBER = props.supportPhoneNumber;
+    if (props.termsOfUseUrl !== undefined) prConfig.LEGAL_URL = props.termsOfUseUrl;
+    if (props.privacyPolicyUrl !== undefined) prConfig.PRIVACY_POLICY_URL = props.privacyPolicyUrl;
+    if (props.translateEnabled !== undefined) prConfig.TRANSLATE = props.translateEnabled;
+    if (props.showRegistration !== undefined) prConfig.SHOW_SIGNUP = props.showRegistration;
+
+    // Handle social URLs as ABOUT_SOCIAL_URLS array according to documentation
+    const socialUrls: Array<Record<string, string>> = [];
+    if (props.facebookUrl !== undefined) socialUrls.push({ "Facebook": props.facebookUrl });
+    if (props.instagramUrl !== undefined) socialUrls.push({ "Instagram": props.instagramUrl });
+    if (props.twitterUrl !== undefined) socialUrls.push({ "Twitter": props.twitterUrl });
+    if (props.youtubeUrl !== undefined) socialUrls.push({ "YouTube": props.youtubeUrl });
+    if (socialUrls.length > 0) {
+      prConfig.ABOUT_SOCIAL_URLS = socialUrls;
+    }
 
     // Apply iOS-specific properties
     if (props.ios) {
@@ -193,10 +213,13 @@ $2`
           continue;
         }
 
-        const infoPlistKey = `PR${key.charAt(0).toUpperCase()}${key.slice(1)}`
-        infoPlist[infoPlistKey] = value
+        const configKey = toScreamingSnakeCase(key)
+        prConfig[configKey] = value
       }
     }
+
+    // Set the PRConfig dictionary in Info.plist
+    infoPlist.PRConfig = prConfig
 
     return config
   })
@@ -371,5 +394,4 @@ export type {
   ExpoPressReaderPluginProps, PressReaderAndroidConfig, PressReaderCommonConfig,
   PressReaderIosConfig
 } from './types'
-export { withExpoPressReader }
 

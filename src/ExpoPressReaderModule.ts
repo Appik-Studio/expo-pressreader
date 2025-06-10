@@ -1,5 +1,5 @@
-import {requireNativeModule} from 'expo-modules-core'
-import type {AnalyticsTracker, DownloadState, PRLaunchOptions, PRState} from './ExpoPressReader.types'
+import { requireNativeModule } from 'expo-modules-core';
+import type { AnalyticsTracker, DownloadState, PRLaunchOptions, PRState } from './ExpoPressReader.types';
 
 interface NativeModule {
   setLaunchOptions(options: PRLaunchOptions): void;
@@ -19,6 +19,7 @@ interface NativeModule {
   deleteDownloadedItem(cid: string, dateString: string): void;
   deleteAllDownloadedItems(): void;
   dismiss(): void;
+  open(): void;
 }
 
 const nativeModule = requireNativeModule<NativeModule>("ExpoPressReader");
@@ -117,12 +118,16 @@ class ExpoPressReader {
     return nativeModule.openArticle(id);
   }
 
-  async getLogs(): Promise<{ linkToUploadedLogs: string; additionalInfo: string }> {
+  async getLogs(): Promise<{ linkToUploadedLogs: string; additionalInfo: any }> {
     return nativeModule.getLogs();
   }
 
   dismiss(): void {
     nativeModule.dismiss();
+  }
+
+  open(): void {
+    nativeModule.open();
   }
 }
 

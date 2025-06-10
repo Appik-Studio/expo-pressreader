@@ -249,6 +249,13 @@ pressReader.catalog.downloaded.delete(item)
 pressReader.catalog.downloaded.deleteAll()
 ```
 
+### Opening the Reader
+
+```typescript
+// Open the main reader interface
+pressReader.open()
+```
+
 ### Opening Articles
 
 ```typescript
@@ -339,8 +346,8 @@ All the functions are called on the instance.
 
 #### Methods
 
-
 - `dismiss(): void` - Cleanup and dismiss SDK
+- `open(): void` - Opens the PressReader interface
 - `openArticle(id: string): Promise<void>` - Open article by ID
 - `getLogs(): Promise<{linkToUploadedLogs: string, additionalInfo: string}>` - Collect logs
 

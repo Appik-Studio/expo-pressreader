@@ -1,33 +1,19 @@
-import ExpoPressReader, {AnalyticsTracker, TrackingArticle, TrackingIssue} from 'expo-pressreader'
+import ExpoPressReader from 'expo-pressreader'
 import {useState} from 'react'
 import {Alert, ScrollView, Text, TouchableOpacity, View} from 'react-native'
-import {styles} from './styles'
+import styles from './styles'
 
 const ARTICLE_IDS = ["281651080992599", "281505052102991", "281852944455775", "281736980338521"];
 
 const HomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const analyticsTracker: AnalyticsTracker = {
-    trackOpenIssueForReading: (issue: TrackingIssue) => {
-      console.log(`Opening ${issue.sourceType} ${issue.title}, ${issue.date} for reading`);
-    },
-    trackIssuePage: (issue: TrackingIssue, pageNumber: number) => {
-      console.log(`Switching to page ${pageNumber} in ${issue.sourceType} ${issue.title}, ${issue.date}`);
-    },
-    trackArticleView: (issue: TrackingIssue, article: TrackingArticle) => {
-      console.log(`Open article(${article.id}) '${article.headline}' from ${issue.title}`);
-    },
-  };
 
 
   const authorizeWithToken = async () => {
     const demoToken = "demo_auth_token_12345";
 
     try {
-      ExpoPressReader.launchOptions = {
-        prAnalyticsTrackers: [analyticsTracker],
-      };
       await ExpoPressReader.instance.account.authorize(demoToken);
       Alert.alert("Success", "Authorization successful");
     } catch (error) {
@@ -45,6 +31,14 @@ const HomePage = () => {
       Alert.alert("Error", `Failed to open article: ${error}`);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const openReader = async () => {
+    try {
+      ExpoPressReader.instance.open();
+    } catch (error) {
+      Alert.alert("Error", `Failed to open PressReader: ${error}`);
     }
   };
 
@@ -118,6 +112,15 @@ const HomePage = () => {
           <Text style={styles.sectionTitle}>SDK Controls</Text>
 
           <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryButton]}
+              onPress={openReader}
+            >
+              <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+                Open PressReader
+              </Text>
+            </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.button, styles.secondaryButton]}
               onPress={dismissReader}

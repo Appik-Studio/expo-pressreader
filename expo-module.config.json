@@ -1,11 +1,16 @@
 {
+  "name": "expo-pressreader",
   "platforms": [
-    "apple",
+    "ios",
     "android"
   ],
-  "apple": {
+  "ios": {
     "modules": [
       "ExpoPressReaderModule"
+    ],
+    "sourceFiles": [
+      "ExpoPressReaderModule.swift",
+      "ExpoAnalyticsTracker.swift"
     ]
   },
   "android": {
