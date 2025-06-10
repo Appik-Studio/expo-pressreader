@@ -15,7 +15,6 @@ Pod::Spec.new do |s|
     :tvos => '16.0'
   }
   s.source         = { git: 'https://github.com/Appik-Studio/expo-pressreader.git' }
-  s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
   s.dependency 'PRSDK', '7.5.1'
